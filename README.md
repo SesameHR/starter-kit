@@ -146,10 +146,15 @@ await sdk.notifications.sendPush({
 
 Set `SESAME_APPLICATION_ID` in your environment variables (see `.env.example`).
 
-## SDK not published yet?
+## Building with Claude Code
 
-If `@sesamehr/sdk` isn't on npm yet, install from a local path:
+This project includes a [Claude Code](https://claude.com/claude-code) slash command that lets you generate features using the SDK. After cloning:
 
 ```bash
-npm install ../sesame-sdk
+# In the project directory, run Claude Code and use the skill:
+/sesame-app build a page that shows team status with online/offline summary and employee table
 ```
+
+The `/sesame-app` command reads the SDK documentation, follows the project conventions (loading states, error boundaries, pagination, `withAuth()` pattern), and generates production-ready pages.
+
+The skill is defined in `.claude/commands/sesame-app.md`.
