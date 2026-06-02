@@ -1,1 +1,108 @@
 @import 'tailwindcss';
+
+/* ── Cowork Hub design tokens (navy #2B3674 · teal #4FD1C5 · page #F4F7FE · Inter) ──
+   A calm, blue-tinted system: navy text, teal accent, soft shadows, 12px card radius.
+   Style with the semantic class names these map to — bg-background, text-foreground,
+   bg-card, text-muted-foreground, border-border, bg-primary, bg-brand, ring-ring, … */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: #f4f7fe;
+  --color-foreground: #2b3674;
+  --color-card: #ffffff;
+  --color-card-foreground: #2b3674;
+
+  --color-primary: #2b3674;
+  --color-primary-foreground: #ffffff;
+
+  --color-brand: #4fd1c5;
+  --color-brand-foreground: #ffffff;
+
+  --color-muted: #edf0f9;
+  --color-muted-foreground: #707eae;
+
+  --color-accent: #e9ecf7;
+  --color-accent-foreground: #2b3674;
+
+  --color-success: #4a9b6e;
+  --color-warning: #b5a04a;
+  --color-warning-foreground: #8a7a2e; /* readable on light bg */
+  --color-destructive: #c85a5a;
+  --color-info: #4a7fb5;
+
+  --color-border: #e9edf7;
+  --color-input: #e9edf7;
+  --color-divider: #edf0f9; /* lighter than border — for internal separators */
+  --color-ring: #aab4e6; /* soft navy focus halo */
+
+  /* Card radius close to the hub's 12px. */
+  --radius-2xl: 0.75rem;
+
+  /* Soft, blue-tinted shadows instead of neutral black, so cards/popovers feel
+     native to the hub. */
+  --shadow-xs: 0 1px 2px rgba(43, 54, 116, 0.04);
+  --shadow-sm: 0 1px 3px rgba(43, 54, 116, 0.05);
+  --shadow-md: 0 4px 12px rgba(43, 54, 116, 0.06);
+  --shadow-lg: 0 8px 24px rgba(43, 54, 116, 0.08);
+  --shadow-xl: 0 12px 32px rgba(43, 54, 116, 0.1);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection in the hub's soft navy tint rather than the browser default. */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+/* Tabular numerals — keeps figures aligned in tables. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ── Animations ─────────────────────────────────────────────────────────── */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-reveal { animation: reveal 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in { animation: fade-in 0.2s ease both; }
+
+/* Skeleton shimmer — a sweeping highlight reads as "loading", not frozen. */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: var(--color-muted);
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shimmer 1.5s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
+}
+
+/* Thin scrollbars inside panels. */
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 999px; }
+.scroll-thin::-webkit-scrollbar-track { background: transparent; }

@@ -61,6 +61,8 @@ src/
 │   ├── sesame.ts           # getSesame() → authenticated SDK from session
 │   └── oauth.ts            # SesameSSO client (only if OAuth vars are set)
 ├── middleware.ts            # Protects /dashboard/* + validates SESSION_SECRET in prod
+├── components/
+│   └── SesameLogo.tsx      # Sesame isotipo (SVG mark) used in the chrome
 ├── types/
 │   └── oauth-client.d.ts   # Type declarations for @sesamehr/oauth-client
 └── app/
@@ -83,6 +85,29 @@ src/
         ├── callback/route.ts  # GET: handle OAuth callback
         └── auto-login/route.ts # GET: handle auto-login token exchange
 ```
+
+## Styling
+
+The kit ships with a small, opinionated design system built on **Tailwind CSS v4**
+and the **Inter** font, themed after the Sesame Cowork Hub (navy `#2B3674`, teal
+`#4FD1C5`, page `#F4F7FE`). All design tokens live in `src/app/globals.css` as a
+`@theme` block, exposed as semantic utilities you can use directly:
+
+```tsx
+<div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+  <h2 className="text-foreground">Title</h2>
+  <p className="text-muted-foreground">Body</p>
+  <button className="bg-primary text-primary-foreground">Primary</button>
+  <span className="text-brand">Accent</span>
+</div>
+```
+
+Available tokens: `background`, `foreground`, `card`, `primary`, `brand`, `muted`,
+`accent`, `border`, `input`, `divider`, `ring`, plus `success` / `warning` /
+`destructive` / `info`. To re-theme the whole app, edit the colour values in
+`globals.css` — every page follows automatically. Helpers included: `.skeleton`
+(shimmer placeholder), `.tnum` (tabular numerals), `.scroll-thin`, and the
+`animate-reveal` / `animate-fade-in` utilities.
 
 ## SDK reference
 
