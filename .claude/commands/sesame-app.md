@@ -6,7 +6,7 @@ Read these files before writing any code:
 
 1. SDK reference: `node_modules/@sesamehr/sdk/README.md`
 
-This project is based on the Sesame starter kit. It already includes: login (email + OAuth SSO + auto-login), encrypted sessions (iron-session), route protection (middleware), logout, multi-company support, and push notifications via the SDK.
+This project is based on the Sesame starter kit. It already includes: login (email + password with Sesame TOTP 2FA, OAuth SSO, auto-login), encrypted sessions (iron-session), route protection (middleware), logout, multi-company support, i18n with next-intl (en/es, cookie-based — no locale routing), and push notifications via the SDK.
 
 ## Step 2: Build what the user asks for
 
@@ -40,6 +40,14 @@ export default async function MyPage() {
 - REST paginated methods (`Paginated<T>`): pass `limit` and `page` (1-indexed)
 - NEVER call a BI method without `limit` — without it, the SDK defaults to 250 rows which is too many for a UI
 - Use limit: 20-50 for tables, limit: 100 for dropdowns/selectors
+
+**Translations (i18n) — ALWAYS:**
+- NEVER hardcode user-facing strings — every label, title, message, and error goes through next-intl
+- Add new strings to BOTH `messages/en.json` and `messages/es.json`, under one namespace per feature (e.g. `"team": { ... }`)
+- Client Components: `const t = useTranslations('team')` from `next-intl`
+- Server Components and Server Actions: `const t = await getTranslations('team')` from `next-intl/server`
+- Interpolation: `"greeting": "Hi, {name}"` → `t('greeting', { name })`
+- The active locale comes from the `NEXT_LOCALE` cookie (set by `src/components/LocaleSwitcher.tsx`) with Accept-Language fallback — do NOT add locale segments to routes
 
 **Loading states — ALWAYS:**
 - Every `/dashboard` subdirectory with an async `page.tsx` MUST have a `loading.tsx`

@@ -28,6 +28,12 @@ Three login methods:
 ### Direct login (default)
 Email + password against Sesame API. No setup needed beyond `SESSION_SECRET`.
 
+Accounts with Sesame two-step verification (TOTP) work automatically: when the
+API reports `double_factor_authentication_active_and_configured`, the login form
+switches to a 6-digit code step and completes the login via the double-factor
+endpoint (see `src/lib/two-factor.ts`). If 2FA is enforced for the account but
+not yet configured, the user is told to set it up in the Sesame app first.
+
 ### OAuth SSO (optional)
 Add all three vars to `.env.local` to enable the "Sign in with Sesame SSO" button:
 
@@ -55,14 +61,24 @@ If a user belongs to multiple companies, they'll see an account selector after l
 ## Project structure
 
 ```
+messages/
+├── en.json                  # English UI strings
+└── es.json                  # Spanish UI strings
 src/
 ├── lib/
 │   ├── session.ts          # iron-session config + getSession()
 │   ├── sesame.ts           # getSesame() → authenticated SDK from session
+│   ├── two-factor.ts       # Sesame TOTP login (2FA detection + second step)
 │   └── oauth.ts            # SesameSSO client (only if OAuth vars are set)
+├── i18n/
+│   ├── config.ts           # Supported locales, default locale, cookie name
+│   ├── request.ts          # Locale resolution: cookie → Accept-Language → default
+│   └── actions.ts          # Server Action: persist locale in cookie
 ├── middleware.ts            # Protects /dashboard/* + validates SESSION_SECRET in prod
 ├── components/
-│   └── SesameLogo.tsx      # Sesame isotipo (SVG mark) used in the chrome
+│   ├── SesameLogo.tsx      # Sesame isotipo (SVG mark) used in the chrome
+│   ├── LocaleSwitcher.tsx  # Language selector (login + dashboard header)
+│   └── OtpInput.tsx        # Segmented 6-digit code input (2FA step)
 ├── types/
 │   └── oauth-client.d.ts   # Type declarations for @sesamehr/oauth-client
 └── app/
@@ -108,6 +124,37 @@ Available tokens: `background`, `foreground`, `card`, `primary`, `brand`, `muted
 `globals.css` — every page follows automatically. Helpers included: `.skeleton`
 (shimmer placeholder), `.tnum` (tabular numerals), `.scroll-thin`, and the
 `animate-reveal` / `animate-fade-in` utilities.
+
+## Internationalization (i18n)
+
+The kit ships fully translated with [next-intl](https://next-intl.dev) — no
+hardcoded UI strings. English and Spanish are included out of the box.
+
+**How the locale is resolved** (no locale prefix in URLs):
+
+1. `NEXT_LOCALE` cookie — set when the user picks a language in the `LocaleSwitcher`
+2. The browser's `Accept-Language` header (first visit)
+3. Default locale (`en`)
+
+**Using translations in your pages:**
+
+```tsx
+// Server Components / Server Actions
+import { getTranslations } from 'next-intl/server'
+const t = await getTranslations('dashboard')
+return <h1>{t('greeting', { name: firstName })}</h1>
+
+// Client Components
+import { useTranslations } from 'next-intl'
+const t = useTranslations('dashboard')
+```
+
+**Adding strings:** add the key to both `messages/en.json` and `messages/es.json`,
+under one namespace per feature. Interpolation uses ICU syntax: `"greeting": "Hi, {name}"`.
+
+**Adding a language:** create `messages/<locale>.json` and add the locale to
+`locales` and `localeNames` in `src/i18n/config.ts` — the switcher and the
+resolution logic pick it up automatically.
 
 ## SDK reference
 

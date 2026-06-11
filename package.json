@@ -13,6 +13,7 @@
     "@sesamehr/sdk": "^0.4.1",
     "iron-session": "^8.0.4",
     "next": "^15.1.0",
+    "next-intl": "^4.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
