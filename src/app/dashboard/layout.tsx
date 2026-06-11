@@ -1,5 +1,7 @@
+import { getTranslations } from 'next-intl/server'
 import { getSession } from '@/lib/session'
 import { SesameMark } from '@/components/SesameLogo'
+import { LocaleSwitcher } from '@/components/LocaleSwitcher'
 import { LogoutButton } from './logout-button'
 
 export default async function DashboardLayout({
@@ -8,6 +10,7 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const session = await getSession()
+  const t = await getTranslations('common')
 
   return (
     <div className="min-h-screen bg-background">
@@ -15,7 +18,7 @@ export default async function DashboardLayout({
         <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-4 px-5 sm:px-8">
           <div className="flex items-center gap-2.5">
             <SesameMark size={28} />
-            <span className="font-sans text-lg font-bold tracking-tight text-foreground">Sesame App</span>
+            <span className="font-sans text-lg font-bold tracking-tight text-foreground">{t('appName')}</span>
           </div>
 
           <div className="ml-auto flex items-center gap-3">
@@ -24,6 +27,7 @@ export default async function DashboardLayout({
                 {session.employeeName}
               </span>
             )}
+            <LocaleSwitcher />
             <LogoutButton />
           </div>
         </div>

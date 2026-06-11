@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "title": "Sesame App",
+    "description": "Built with @sesamehr/sdk"
+  },
+  "common": {
+    "appName": "Sesame App",
+    "builtWith": "Built with @sesamehr/sdk",
+    "loading": "Loading…",
+    "language": "Language"
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Use your Sesame HR credentials",
+    "email": "Email",
+    "emailPlaceholder": "you@company.com",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "or": "or",
+    "sso": "Sign in with Sesame SSO",
+    "twoFactor": {
+      "title": "Two-step verification",
+      "subtitle": "Enter the 6-digit code from your authenticator app",
+      "codeDigit": "Verification code digit {position}",
+      "verify": "Verify",
+      "verifying": "Verifying…",
+      "back": "← Back to sign in"
+    },
+    "errors": {
+      "auth_failed": "Authentication failed. Please try again.",
+      "oauth_not_configured": "OAuth is not configured on this server.",
+      "no_employees": "No employee accounts found for this user.",
+      "missing_params": "Invalid callback. Please try again.",
+      "auto_login_failed": "Auto-login failed. Please sign in manually.",
+      "missing_credentials": "Email and password are required.",
+      "login_failed": "Login failed. Check your credentials.",
+      "invalid_two_factor_code": "The verification code is not valid. Please try again.",
+      "two_factor_not_configured": "Two-step verification is required for your account but you haven't set it up yet. Configure it in the Sesame app before continuing."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "greeting": "Hi, {name}",
+    "intro": "Your starter kit is ready — build your pages with the Sesame SDK.",
+    "signOut": "Sign out",
+    "error": {
+      "title": "Something went wrong",
+      "description": "There was a problem loading this page. Please try again.",
+      "retry": "Try again"
+    }
+  },
+  "selectEmployee": {
+    "title": "Select account",
+    "subtitle": "You belong to multiple companies. Choose one to continue."
+  }
+}

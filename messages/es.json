@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "title": "Sesame App",
+    "description": "Creado con @sesamehr/sdk"
+  },
+  "common": {
+    "appName": "Sesame App",
+    "builtWith": "Creado con @sesamehr/sdk",
+    "loading": "Cargando…",
+    "language": "Idioma"
+  },
+  "login": {
+    "title": "Inicia sesión",
+    "subtitle": "Usa tus credenciales de Sesame HR",
+    "email": "Email",
+    "emailPlaceholder": "tu@empresa.com",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "submitting": "Iniciando sesión…",
+    "or": "o",
+    "sso": "Entrar con SSO de Sesame",
+    "twoFactor": {
+      "title": "Verificación en dos pasos",
+      "subtitle": "Introduce el código de 6 dígitos de tu app de autenticación",
+      "codeDigit": "Dígito {position} del código de verificación",
+      "verify": "Verificar",
+      "verifying": "Verificando…",
+      "back": "← Volver al inicio de sesión"
+    },
+    "errors": {
+      "auth_failed": "La autenticación ha fallado. Inténtalo de nuevo.",
+      "oauth_not_configured": "OAuth no está configurado en este servidor.",
+      "no_employees": "No se han encontrado cuentas de empleado para este usuario.",
+      "missing_params": "Callback no válido. Inténtalo de nuevo.",
+      "auto_login_failed": "El acceso automático ha fallado. Inicia sesión manualmente.",
+      "missing_credentials": "El email y la contraseña son obligatorios.",
+      "login_failed": "No se ha podido iniciar sesión. Comprueba tus credenciales.",
+      "invalid_two_factor_code": "El código de verificación no es válido. Inténtalo de nuevo.",
+      "two_factor_not_configured": "Tienes la verificación en dos pasos obligatoria pero aún no la has configurado. Configúrala en la app de Sesame antes de continuar."
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "greeting": "Hola, {name}",
+    "intro": "Tu starter kit está listo: crea tus páginas con el SDK de Sesame.",
+    "signOut": "Cerrar sesión",
+    "error": {
+      "title": "Algo ha ido mal",
+      "description": "Ha habido un problema al cargar esta página. Inténtalo de nuevo.",
+      "retry": "Reintentar"
+    }
+  },
+  "selectEmployee": {
+    "title": "Selecciona una cuenta",
+    "subtitle": "Perteneces a varias empresas. Elige una para continuar."
+  }
+}

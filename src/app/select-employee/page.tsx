@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { getSession } from '@/lib/session'
 import { SesameMark } from '@/components/SesameLogo'
 import { selectEmployeeAction } from './actions'
@@ -13,6 +14,7 @@ function initials(name: string) {
 }
 
 export default async function SelectEmployeePage() {
+  const t = await getTranslations('selectEmployee')
   const session = await getSession()
 
   if (!session.token) redirect('/login')
@@ -27,8 +29,8 @@ export default async function SelectEmployeePage() {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-7 shadow-sm">
-          <h1 className="text-xl font-bold tracking-tight text-foreground">Select account</h1>
-          <p className="mt-1 text-sm text-muted-foreground">You belong to multiple companies. Choose one to continue.</p>
+          <h1 className="text-xl font-bold tracking-tight text-foreground">{t('title')}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
 
           <ul className="mt-6 space-y-2">
             {session.employees.map((emp) => (
