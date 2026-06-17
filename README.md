@@ -54,6 +54,33 @@ https://myapp.com/?token=abc123&sesameRegion=back-eu1
 
 The middleware detects the `token` + `sesameRegion` params on any URL, exchanges the token with the Sesame API, creates a session, and redirects to `/dashboard`. No configuration needed — it works automatically.
 
+### Cowork embed (launch ticket, optional)
+Run this app embedded in the **Cowork Apps hub** with single sign-on — the user
+opens it from the hub and lands logged in, no login screen inside the iframe.
+
+Set both vars in `.env.local` to enable it:
+
+```env
+COWORK_BACKEND_URL=https://api-cowork.sesametime.com   # Cowork backend origin, no trailing slash
+LAUNCH_SHARED_SECRET=your-per-app-shared-secret        # must match the app's external_apps.launch_secret
+```
+
+How it works: Cowork mints a single-use `ticket` and loads this app in an iframe
+at `/api/auth/launch?ticket=…`. The handler redeems the ticket server-to-server
+against `POST {COWORK_BACKEND_URL}/apps/redeem-ticket` (authenticated with
+`X-Launch-Secret: LAUNCH_SHARED_SECRET`), receives the user's Sesame credentials,
+starts the session, and redirects to `/dashboard`. The opaque ticket is the only
+thing on the URL; the real token is exchanged server-side into the httpOnly
+cookie. Sessions started this way are flagged `embedded: true`.
+
+With either var unset the route fails closed to `/login?error=launch_failed`, so
+the standard logins above keep working unchanged.
+
+To register the app on the Cowork side, add a row to its `external_apps` table
+with this app's public origin as `base_url` and the same secret as
+`launch_secret`. The origin must be allowed by Cowork's iframe CSP
+(`frame-src`) — `*.sesametime.com` is allowed out of the box.
+
 ## Multi-company support
 
 If a user belongs to multiple companies, they'll see an account selector after login. The selected employee/company is stored in the encrypted session cookie.
@@ -69,6 +96,7 @@ src/
 │   ├── session.ts          # iron-session config + getSession()
 │   ├── sesame.ts           # getSesame() → authenticated SDK from session
 │   ├── two-factor.ts       # Sesame TOTP login (2FA detection + second step)
+│   ├── request-url.ts      # publicUrl() → proxy-correct absolute redirects
 │   └── oauth.ts            # SesameSSO client (only if OAuth vars are set)
 ├── i18n/
 │   ├── config.ts           # Supported locales, default locale, cookie name
@@ -99,7 +127,8 @@ src/
     └── api/auth/
         ├── login/route.ts     # GET: redirect to SSO
         ├── callback/route.ts  # GET: handle OAuth callback
-        └── auto-login/route.ts # GET: handle auto-login token exchange
+        ├── auto-login/route.ts # GET: handle auto-login token exchange
+        └── launch/route.ts    # GET: Cowork launch-ticket redeem → session
 ```
 
 ## Styling
@@ -189,7 +218,7 @@ Dashboard pages fetch data from the Sesame BI engine (server-side). Without a `l
 
 - **Storage**: encrypted httpOnly cookie via `iron-session`
 - **TTL**: 1 week
-- **Contents**: token, region, companyId, employeeId, employeeName
+- **Contents**: token, region, companyId, employeeId, employeeName, and `embedded` (true for Cowork-launched sessions)
 - **Security**: cookies are encrypted with `SESSION_SECRET`, httpOnly (no JS access), secure in production
 - **Cookie name**: defaults to `sesame-session`, configurable via `SESSION_COOKIE_NAME`
 
