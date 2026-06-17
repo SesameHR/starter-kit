@@ -17,6 +17,9 @@ export interface SessionData {
   employeeName?: string
   // Available when user has multiple employees/companies
   employees?: EmployeeOption[]
+  // True when the session was started by a Cowork launch ticket (embedded in an
+  // iframe). Lets the UI hide login/logout chrome that doesn't apply in-frame.
+  embedded?: boolean
 }
 
 const sessionOptions: SessionOptions = {
