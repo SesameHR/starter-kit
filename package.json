@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@sesamehr/oauth-client": "^1.0.4",
-    "@sesamehr/sdk": "0.x",
+    "@sesamehr/sdk": ">=0.8.0-beta.0 <0.8.0",
     "iron-session": "^8.0.4",
     "next": "^15.1.0",
     "next-intl": "^4.13.0",
