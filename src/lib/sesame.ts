@@ -1,6 +1,6 @@
 import { SesameSDK, SesameApiError } from '@sesamehr/sdk'
 import { getSession, isSessionComplete } from './session'
-import { redirect } from 'next/navigation'
+import { redirect, unstable_rethrow } from 'next/navigation'
 
 /**
  * Get an authenticated SesameSDK instance from the current session.
@@ -51,7 +51,8 @@ export async function getSesameWithSession() {
 }
 
 /**
- * Wrap an SDK call. If the token is expired (401/403), clears session and redirects to /login.
+ * Wrap an SDK call. If the token is expired (401/403), hands off to the logout
+ * Route Handler, which clears the session and redirects to /login.
  * Use this in Server Components around SDK calls that may fail due to expired tokens.
  *
  * @example
@@ -61,10 +62,16 @@ export async function withAuth<T>(promise: Promise<T>): Promise<T> {
   try {
     return await promise
   } catch (error) {
+    // Next signals control flow (redirect, notFound, dynamic usage) by throwing.
+    // Re-throw those first so the inspection below never swallows them.
+    unstable_rethrow(error)
+
     if (error instanceof SesameApiError && (error.status === 401 || error.status === 403)) {
-      const session = await getSession()
-      session.destroy()
-      redirect('/login')
+      // Cookies are readonly while a Server Component renders: destroying the
+      // session here would throw ReadonlyRequestCookiesError before the redirect
+      // ever ran, and the user would land on the error boundary instead of
+      // /login. Redirect to the Route Handler, where cookies are mutable.
+      redirect('/api/auth/logout?reason=session_expired')
     }
     throw error
   }
