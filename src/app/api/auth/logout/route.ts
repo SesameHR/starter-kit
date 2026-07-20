@@ -18,8 +18,17 @@ const ALLOWED_REASONS = new Set(['session_expired'])
  * why the user was signed out; unknown reasons are dropped rather than reflected.
  * Redirects use `publicUrl()` so they resolve to the public origin behind a proxy
  * instead of the internal bind address.
+ *
+ * Being a GET that mutates state, a cross-site link could otherwise sign users
+ * out on click (SameSite=Lax still sends the cookie on top-level navigation), so
+ * cross-site requests are bounced to /login without destroying anything.
  */
 export async function GET(request: NextRequest) {
+  const site = request.headers.get('sec-fetch-site')
+  if (site && site !== 'same-origin' && site !== 'none') {
+    return NextResponse.redirect(publicUrl('/login', request))
+  }
+
   const session = await getSession()
   session.destroy()
 

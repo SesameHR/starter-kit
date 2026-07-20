@@ -17,7 +17,7 @@ Interpret $ARGUMENTS and build the requested pages/sections.
 **SDK:**
 - Use `getSesame()` from `@/lib/sesame` to get the authenticated SDK in Server Components
 - Use `getSesameWithSession()` when you also need the employee name
-- Wrap SDK calls with `withAuth()` from `@/lib/sesame` to handle expired tokens (auto-redirects to /login on 401/403)
+- Wrap SDK calls with `withAuth()` from `@/lib/sesame` to handle expired tokens (on a 401 it redirects to `/api/auth/logout`, which clears the cookie and lands on /login). Never wrap it in a `try/catch` that swallows errors — the redirect works by throwing. Never call `session.destroy()` while a Server Component renders: cookies are readonly there.
 - For mutations (clock in, clock out, approve, etc.) use Server Actions with `revalidatePath`
 - `employees.me()` returns an object with `workStatus` ("online" | "offline" | "paused" | "remote"), `status`, `lastCheck`, etc.
 
