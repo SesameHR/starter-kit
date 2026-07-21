@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { getSession } from '@/lib/session'
-import { publicUrl } from '@/lib/request-url'
+import { redirectToPath } from '@/lib/request-url'
 
 /** Reasons a caller may surface on the login screen, as `login.errors.*` keys. */
 const ALLOWED_REASONS = new Set(['session_expired'])
@@ -16,8 +16,8 @@ const ALLOWED_REASONS = new Set(['session_expired'])
  *
  * `?reason=` is forwarded to /login as `?error=` so the login page can explain
  * why the user was signed out; unknown reasons are dropped rather than reflected.
- * Redirects use `publicUrl()` so they resolve to the public origin behind a proxy
- * instead of the internal bind address.
+ * Redirects use `redirectToPath()`, which emits a relative `Location` so the
+ * browser resolves it against whatever origin it actually requested.
  *
  * Being a GET that mutates state, a cross-site link could otherwise sign users
  * out on click (SameSite=Lax still sends the cookie on top-level navigation), so
@@ -26,16 +26,16 @@ const ALLOWED_REASONS = new Set(['session_expired'])
 export async function GET(request: NextRequest) {
   const site = request.headers.get('sec-fetch-site')
   if (site && site !== 'same-origin' && site !== 'none') {
-    return NextResponse.redirect(publicUrl('/login', request))
+    return redirectToPath('/login')
   }
 
   const session = await getSession()
   session.destroy()
 
   const reason = request.nextUrl.searchParams.get('reason')
-  const target = reason && ALLOWED_REASONS.has(reason) ? `/login?error=${reason}` : '/login'
+  const target: `/${string}` = reason && ALLOWED_REASONS.has(reason) ? `/login?error=${reason}` : '/login'
 
-  const response = NextResponse.redirect(publicUrl(target, request))
+  const response = redirectToPath(target)
   response.headers.set('Cache-Control', 'no-store')
   return response
 }
