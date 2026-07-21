@@ -99,12 +99,16 @@ function LoginCard() {
   const oauthError = searchParams.get('error')
   const oauthEnabled = searchParams.get('oauth') !== '0'
 
+  // `?error=` comes straight from the URL, so only ever render it as a lookup key:
+  // an unknown value falls back to a generic message instead of being displayed.
+  // Echoing it would let a link put attacker-chosen text inside the app's own
+  // error alert — not XSS (React escapes it), but credible phishing on our domain.
   const loginErrorMessage =
     loginState?.error ||
     (oauthError
       ? t.has(`errors.${oauthError}`)
         ? t(`errors.${oauthError}`)
-        : oauthError
+        : t('errors.auth_failed')
       : null)
 
   if (showTwoFactor) {

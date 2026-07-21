@@ -33,6 +33,7 @@
       "no_employees": "No employee accounts found for this user.",
       "missing_params": "Invalid callback. Please try again.",
       "auto_login_failed": "Auto-login failed. Please sign in manually.",
+      "launch_failed": "Couldn't open your session from Cowork. Please sign in.",
       "session_expired": "Your session has expired. Please sign in again.",
       "missing_credentials": "Email and password are required.",
       "login_failed": "Login failed. Check your credentials.",
