@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { getSession } from '@/lib/session'
-import { publicUrl } from '@/lib/request-url'
+import { redirectToPath } from '@/lib/request-url'
 
 // Where the Cowork backend lives, and the shared secret it expects on the
 // server-to-server redeem call. Both are required for the launch flow; leave
@@ -25,13 +25,12 @@ interface RedeemResponse {
  *
  * The opaque ticket is the only thing that ever rides the URL; the real Sesame
  * token is exchanged server-side and lands only in the httpOnly session cookie.
- * Redirects use `publicUrl()` so they resolve to the public origin behind a
- * proxy instead of the internal bind address.
+ * Redirects use `redirectToPath()`, which emits a relative `Location` the browser
+ * resolves against the origin it actually requested — correct behind a proxy and
+ * in local dev alike, with no host header to trust.
  */
 export async function GET(request: NextRequest) {
-  const failure = NextResponse.redirect(
-    publicUrl('/login?error=launch_failed', request),
-  )
+  const failure = redirectToPath('/login?error=launch_failed')
   failure.headers.set('Referrer-Policy', 'no-referrer')
 
   const ticket = request.nextUrl.searchParams.get('ticket')
@@ -65,7 +64,7 @@ export async function GET(request: NextRequest) {
   session.embedded = true
   await session.save()
 
-  const response = NextResponse.redirect(publicUrl('/dashboard', request))
+  const response = redirectToPath('/dashboard')
   response.headers.set('Referrer-Policy', 'no-referrer')
   return response
 }

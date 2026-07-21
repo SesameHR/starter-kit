@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { SesameSDK } from '@sesamehr/sdk'
 import { getSession } from '@/lib/session'
+import { redirectToPath } from '@/lib/request-url'
 
 export async function GET(request: NextRequest) {
   // Parse token from raw query string to preserve '+' characters
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
   const sesameRegion = rawParams.get('sesameRegion')
 
   if (!token || !sesameRegion) {
-    return NextResponse.redirect(new URL('/login?error=missing_params', request.url))
+    return redirectToPath('/login?error=missing_params')
   }
 
   try {
@@ -27,8 +28,8 @@ export async function GET(request: NextRequest) {
     session.employeeName = `${details.profile.firstName} ${details.profile.lastName}`.trim()
     await session.save()
 
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return redirectToPath('/dashboard')
   } catch {
-    return NextResponse.redirect(new URL('/login?error=auto_login_failed', request.url))
+    return redirectToPath('/login?error=auto_login_failed')
   }
 }

@@ -1,11 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest, NextResponse } from 'next/server'
 import { getSSOClient } from '@/lib/oauth'
 import { getSession, type EmployeeOption } from '@/lib/session'
+import { redirectToPath } from '@/lib/request-url'
 import { configFromCredentials, type SesameCredentials } from '@sesamehr/sdk'
 
 /** Redirect and clear the OAuth state cookie in every exit path. */
-function redirectClean(url: URL): NextResponse {
-  const response = NextResponse.redirect(url)
+function redirectClean(path: `/${string}`): NextResponse {
+  const response = redirectToPath(path)
   response.cookies.delete('oauth-state')
   return response
 }
@@ -13,7 +14,7 @@ function redirectClean(url: URL): NextResponse {
 export async function GET(request: NextRequest) {
   const sso = getSSOClient()
   if (!sso) {
-    return redirectClean(new URL('/login?error=oauth_not_configured', request.url))
+    return redirectClean('/login?error=oauth_not_configured')
   }
 
   const code = request.nextUrl.searchParams.get('code')
@@ -21,11 +22,11 @@ export async function GET(request: NextRequest) {
   const storedState = request.cookies.get('oauth-state')?.value
 
   if (!code || !state) {
-    return redirectClean(new URL('/login?error=missing_params', request.url))
+    return redirectClean('/login?error=missing_params')
   }
 
   if (!storedState || storedState !== state) {
-    return redirectClean(new URL('/login?error=auth_failed', request.url))
+    return redirectClean('/login?error=auth_failed')
   }
 
   try {
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     const credentials = result.sesameCredentials as unknown as SesameCredentials
     if (!credentials?.employees?.length) {
-      return redirectClean(new URL('/login?error=no_employees', request.url))
+      return redirectClean('/login?error=no_employees')
     }
 
     const session = await getSession()
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
       session.companyId = config.companyId
       session.employeeName = emp.full_name
       await session.save()
-      return redirectClean(new URL('/dashboard', request.url))
+      return redirectClean('/dashboard')
     }
 
     // Multiple employees — let user choose
@@ -64,8 +65,8 @@ export async function GET(request: NextRequest) {
       }),
     )
     await session.save()
-    return redirectClean(new URL('/select-employee', request.url))
+    return redirectClean('/select-employee')
   } catch {
-    return redirectClean(new URL('/login?error=auth_failed', request.url))
+    return redirectClean('/login?error=auth_failed')
   }
 }
