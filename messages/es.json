@@ -33,6 +33,7 @@
       "no_employees": "No se han encontrado cuentas de empleado para este usuario.",
       "missing_params": "Callback no válido. Inténtalo de nuevo.",
       "auto_login_failed": "El acceso automático ha fallado. Inicia sesión manualmente.",
+      "session_expired": "Tu sesión ha caducado. Vuelve a iniciar sesión.",
       "missing_credentials": "El email y la contraseña son obligatorios.",
       "login_failed": "No se ha podido iniciar sesión. Comprueba tus credenciales.",
       "invalid_two_factor_code": "El código de verificación no es válido. Inténtalo de nuevo.",

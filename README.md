@@ -128,7 +128,8 @@ src/
         ├── login/route.ts     # GET: redirect to SSO
         ├── callback/route.ts  # GET: handle OAuth callback
         ├── auto-login/route.ts # GET: handle auto-login token exchange
-        └── launch/route.ts    # GET: Cowork launch-ticket redeem → session
+        ├── launch/route.ts    # GET: Cowork launch-ticket redeem → session
+        └── logout/route.ts    # GET: destroy session → /login
 ```
 
 ## Styling
@@ -207,7 +208,15 @@ export default async function MyPage() {
 ```
 
 - `getSesame()` — returns authenticated SDK, redirects to /login if no session
-- `withAuth(promise)` — wraps SDK calls, redirects to /login if token expired (401/403)
+- `withAuth(promise)` — wraps SDK calls; on a 401 redirects to `/api/auth/logout`,
+  which clears the cookie and lands on /login
+
+> Cookies are **readonly while a Server Component renders** — Next only allows
+> writes from a Server Action or Route Handler. That is why `withAuth()` hands off
+> to `/api/auth/logout` instead of calling `session.destroy()` inline. Calling it
+> during render throws `ReadonlyRequestCookiesError` and drops the user on the
+> error boundary. Never wrap `withAuth()` in a `try/catch` that swallows errors
+> either: the redirect works by throwing, so catching it silently cancels it.
 - Always pass `limit` to BI methods (20-50 for tables, 100 for selectors)
 
 ## Important: loading states
