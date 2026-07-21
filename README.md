@@ -96,7 +96,7 @@ src/
 │   ├── session.ts          # iron-session config + getSession()
 │   ├── sesame.ts           # getSesame() → authenticated SDK from session
 │   ├── two-factor.ts       # Sesame TOTP login (2FA detection + second step)
-│   ├── request-url.ts      # publicUrl() → proxy-correct absolute redirects
+│   ├── request-url.ts      # redirectToPath() → same-origin relative redirects
 │   └── oauth.ts            # SesameSSO client (only if OAuth vars are set)
 ├── i18n/
 │   ├── config.ts           # Supported locales, default locale, cookie name
