@@ -41,6 +41,18 @@
       "two_factor_not_configured": "Tienes la verificación en dos pasos obligatoria pero aún no la has configurado. Configúrala en la app de Sesame antes de continuar."
     }
   },
+  "designSystem": {
+    "title": "Design system",
+    "subtitle": "Componentes de @sesamehr/react-design-system con el tema de esta app.",
+    "alertTitle": "Atención",
+    "alertDescription": "Esta alerta viene directamente del paquete del design system.",
+    "inputLabel": "Tu nombre",
+    "inputPlaceholder": "Escribe algo…",
+    "tabOne": "Primera pestaña",
+    "tabTwo": "Segunda pestaña",
+    "tabOneContent": "Contenido de la primera pestaña.",
+    "tabTwoContent": "Contenido de la segunda pestaña."
+  },
   "dashboard": {
     "title": "Panel",
     "greeting": "Hola, {name}",

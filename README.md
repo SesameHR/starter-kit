@@ -117,6 +117,8 @@ src/
     ├── select-employee/
     │   ├── page.tsx         # Company/employee selector (multi-company)
     │   └── actions.ts       # Server Action: select employee
+    ├── design-system/
+    │   └── page.tsx         # Showcase of @sesamehr/react-design-system
     ├── dashboard/
     │   ├── layout.tsx       # Header with employee name + logout
     │   ├── page.tsx         # Example: SDK usage
@@ -154,6 +156,32 @@ Available tokens: `background`, `foreground`, `card`, `primary`, `brand`, `muted
 `globals.css` — every page follows automatically. Helpers included: `.skeleton`
 (shimmer placeholder), `.tnum` (tabular numerals), `.scroll-thin`, and the
 `animate-reveal` / `animate-fade-in` utilities.
+
+### Design system components
+
+The official **[@sesamehr/react-design-system](https://www.npmjs.com/package/@sesamehr/react-design-system)**
+is wired in and ready to use — Buttons, Badges, Alerts, Tabs, form inputs,
+Dialogs, Tables and more, built on Radix UI:
+
+```tsx
+'use client'
+import { Button, Alert, AlertTitle } from '@sesamehr/react-design-system'
+```
+
+Visit **`/design-system`** for a live showcase. Components are client
+components (Radix), so import them from files marked `'use client'`.
+
+Two things to know about how it's integrated (both live in `globals.css`):
+
+- Its compiled stylesheet is imported once, and a **"design system bridge"**
+  `:root` block re-points the package's tokens (`--primary`, `--background`,
+  `--card`, …) at the Cowork palette, so DS components render native to this
+  app's theme instead of the package's stock indigo/Figtree look. Re-theming
+  means editing `@theme` **and** the bridge — the bridge values are literals
+  on purpose (the comment there explains the var-cycle hazard).
+- The package's stylesheet references Figtree/Geist Mono via a Google Fonts
+  `@import`, but Next strips it at build time and the bridge keeps Inter as
+  `--font-sans` — no external font is fetched or used.
 
 ## Internationalization (i18n)
 
