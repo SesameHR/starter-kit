@@ -104,12 +104,13 @@ src/
 │   └── actions.ts          # Server Action: persist locale in cookie
 ├── middleware.ts            # Protects /dashboard/* + validates SESSION_SECRET in prod
 ├── components/
-│   ├── SesameLogo.tsx      # Sesame isotipo (SVG mark) used in the chrome
+│   ├── SesameLogo.tsx      # Official brand marks: `SesameLogo` (full lockup) + `SesameMark` (isotipo)
 │   ├── LocaleSwitcher.tsx  # Language selector (login + dashboard header)
 │   └── OtpInput.tsx        # Segmented 6-digit code input (2FA step)
 ├── types/
 │   └── oauth-client.d.ts   # Type declarations for @sesamehr/oauth-client
 └── app/
+    ├── icon.svg             # Favicon (Sesame isotipo), picked up by Next.js metadata
     ├── page.tsx             # Root → redirect to /dashboard or /login
     ├── login/
     │   ├── page.tsx         # Login form + optional OAuth button

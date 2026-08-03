@@ -3,7 +3,7 @@
 import { Suspense, useActionState, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { SesameMark } from '@/components/SesameLogo'
+import { SesameLogo } from '@/components/SesameLogo'
 import { LocaleSwitcher } from '@/components/LocaleSwitcher'
 import { OtpInput } from '@/components/OtpInput'
 import { loginAction, twoFactorAction, type LoginState } from './actions'
@@ -200,9 +200,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
-        <div className="mb-6 flex flex-col items-center gap-2.5">
-          <SesameMark size={40} />
-          <span className="font-sans text-xl font-bold lowercase leading-none tracking-tight text-foreground">sesame</span>
+        <div className="mb-6 flex justify-center">
+          <SesameLogo height={34} />
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-7 shadow-sm">

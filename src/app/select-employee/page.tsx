@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { getSession } from '@/lib/session'
-import { SesameMark } from '@/components/SesameLogo'
+import { SesameLogo } from '@/components/SesameLogo'
 import { selectEmployeeAction } from './actions'
 
 function initials(name: string) {
@@ -23,9 +23,8 @@ export default async function SelectEmployeePage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="mb-6 flex flex-col items-center gap-2.5">
-          <SesameMark size={40} />
-          <span className="font-sans text-xl font-bold lowercase leading-none tracking-tight text-foreground">sesame</span>
+        <div className="mb-6 flex justify-center">
+          <SesameLogo height={34} />
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-7 shadow-sm">
