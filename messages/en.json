@@ -41,6 +41,18 @@
       "two_factor_not_configured": "Two-step verification is required for your account but you haven't set it up yet. Configure it in the Sesame app before continuing."
     }
   },
+  "designSystem": {
+    "title": "Design system",
+    "subtitle": "@sesamehr/react-design-system components rendered with this app's theme.",
+    "alertTitle": "Heads up",
+    "alertDescription": "This alert comes straight from the design system package.",
+    "inputLabel": "Your name",
+    "inputPlaceholder": "Type something…",
+    "tabOne": "First tab",
+    "tabTwo": "Second tab",
+    "tabOneContent": "Content of the first tab.",
+    "tabTwoContent": "Content of the second tab."
+  },
   "dashboard": {
     "title": "Dashboard",
     "greeting": "Hi, {name}",

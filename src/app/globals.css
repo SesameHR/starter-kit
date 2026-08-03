@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import '@sesamehr/react-design-system/style.css';
 
 /* ── Cowork Hub design tokens (navy #2B3674 · teal #4FD1C5 · page #F4F7FE · Inter) ──
    A calm, blue-tinted system: navy text, teal accent, soft shadows, 12px card radius.
@@ -45,6 +46,66 @@
   --shadow-md: 0 4px 12px rgba(43, 54, 116, 0.06);
   --shadow-lg: 0 8px 24px rgba(43, 54, 116, 0.08);
   --shadow-xl: 0 12px 32px rgba(43, 54, 116, 0.1);
+}
+
+/* ── Design system bridge ───────────────────────────────────────────────────
+   @sesamehr/react-design-system ships pre-compiled utilities that read the
+   UNPREFIXED shadcn-style variables below (--primary, --background, …), plus
+   its own :root defaults (indigo palette, Figtree, a custom radius scale).
+   Those defaults are unlayered, so they would beat our @theme (layer(theme))
+   on any shared name. This block, being unlayered AND later in source order,
+   wins over both — it re-points every DS token at the Cowork palette so DS
+   components render native to the hub, and re-asserts the two values the DS
+   would otherwise change under our own markup.
+
+   Everything is a LITERAL, duplicated from @theme above on purpose: the DS
+   also re-emits some `--color-X` as `var(--X)` (e.g. --color-primary,
+   --color-ring), so writing `--primary: var(--color-primary)` here would be a
+   cycle — CSS resolves it to "invalid", and every bg-primary in the app goes
+   transparent. Keep the values in sync with @theme by hand. */
+:root {
+  /* Re-asserted over the DS defaults (Figtree / 14-16px radii). */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --radius-xl: 0.75rem; /* Tailwind default — DS bumps it to 0.875rem */
+  --radius-2xl: 0.75rem; /* our card radius from @theme above */
+
+  /* shadcn-style tokens consumed by DS components. */
+  --background: #f4f7fe;
+  --foreground: #2b3674;
+  --card: #ffffff;
+  --card-foreground: #2b3674;
+  --popover: #ffffff;
+  --popover-foreground: #2b3674;
+  --primary: #2b3674;
+  --primary-foreground: #ffffff;
+  --secondary: #e9ecf7;
+  --secondary-foreground: #2b3674;
+  --muted: #edf0f9;
+  --muted-foreground: #707eae;
+  --accent: #e9ecf7;
+  --accent-foreground: #2b3674;
+  --destructive: #c85a5a;
+  --destructive-foreground: #ffffff;
+  --success: #4a9b6e;
+  --success-foreground: #ffffff;
+  --warning: #b5a04a;
+  --warning-foreground: #ffffff; /* text ON the amber bg — not the on-light one */
+  --border: #e9edf7;
+  --input: #e9edf7;
+  --ring: #aab4e6;
+
+  /* DS extended tokens (font-*, border-*, bg-*). */
+  --font-primary: #2b3674;
+  --font-secondary: #707eae;
+  --font-tertiary: #a3aed0; /* lighter step below muted-foreground */
+  --font-error: #c85a5a;
+  --font-success: #4a9b6e;
+  --font-warning: #8a7a2e; /* readable on light bg, like @theme's warning-foreground */
+  --border-default: #e9edf7;
+  --border-hover: #aab4e6;
+  --bg-base: #ffffff;
+  --bg-muted: #f4f7fe;
+  --bg-subtle: #edf0f9;
 }
 
 body {
