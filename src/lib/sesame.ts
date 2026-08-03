@@ -1,6 +1,22 @@
-import { SesameSDK, SesameApiError } from '@sesamehr/sdk'
+import { SesameSDK, SesameApiError, type SesameConfig } from '@sesamehr/sdk'
 import { getSession, isSessionComplete } from './session'
 import { redirect } from 'next/navigation'
+
+/**
+ * Build the SDK config from a session. On sq environments (sq1..sq13) BI must
+ * go through the single dev gateway `gateway-sqx` (the "x" is literal — the
+ * region is routed via the X-Region header the SDK already sends).
+ */
+function sesameConfig(session: { token: string; region: string; companyId?: string; employeeId?: string }): SesameConfig {
+  const isSq = /^sq\d+$/i.test(session.region)
+  return {
+    token: session.token,
+    region: session.region,
+    companyId: session.companyId!,
+    employeeId: session.employeeId!,
+    ...(isSq ? { biBaseUrl: 'https://gateway-sqx.sesametime.com' } : {}),
+  }
+}
 
 /**
  * Get an authenticated SesameSDK instance from the current session.
@@ -17,12 +33,7 @@ export async function getSesame(): Promise<SesameSDK> {
     redirect('/select-employee')
   }
 
-  return new SesameSDK({
-    token: session.token,
-    region: session.region,
-    companyId: session.companyId!,
-    employeeId: session.employeeId!,
-  })
+  return new SesameSDK(sesameConfig(session))
 }
 
 /**
@@ -40,12 +51,7 @@ export async function getSesameWithSession() {
     redirect('/select-employee')
   }
 
-  const sdk = new SesameSDK({
-    token: session.token,
-    region: session.region,
-    companyId: session.companyId!,
-    employeeId: session.employeeId!,
-  })
+  const sdk = new SesameSDK(sesameConfig(session))
 
   return { sdk, session }
 }
