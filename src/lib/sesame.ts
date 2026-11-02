@@ -2,6 +2,16 @@ import { SesameSDK, SesameApiError, type SesameConfig } from '@sesamehr/sdk'
 import { getSession, isSessionComplete } from './session'
 import { redirect } from 'next/navigation'
 
+// Studio sandboxes reach Sesame through their egress gateway at fixed API and
+// BI origins, where `{region}` stands for the session's region code. When
+// unset, the SDK keeps its region-derived public defaults.
+const apiBaseUrl = process.env.SESAME_API_BASE_URL
+const biBaseUrl = process.env.SESAME_BI_BASE_URL
+
+function forRegion(url: string, region: string): string {
+  return url.replaceAll('{region}', encodeURIComponent(region.toLowerCase()))
+}
+
 /**
  * Build the SDK config from a session. On sq environments (sq1..sq13) BI must
  * go through the single dev gateway `gateway-sqx` (the "x" is literal — the
@@ -15,6 +25,8 @@ function sesameConfig(session: { token: string; region: string; companyId?: stri
     companyId: session.companyId!,
     employeeId: session.employeeId!,
     ...(isSq ? { biBaseUrl: 'https://gateway-sqx.sesametime.com' } : {}),
+    ...(apiBaseUrl ? { baseUrl: forRegion(apiBaseUrl, session.region) } : {}),
+    ...(biBaseUrl ? { biBaseUrl: forRegion(biBaseUrl, session.region) } : {}),
   }
 }
 
