@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages, getTranslations } from 'next-intl/server'
 import './globals.css'
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+// Inter (latin, variable 400-700) bundled with the app: next/font/google
+// downloads the font while compiling, and a Studio sandbox has no internet.
+const inter = localFont({
+  src: './fonts/inter-latin-var.woff2',
   variable: '--font-inter',
   display: 'swap',
 })
