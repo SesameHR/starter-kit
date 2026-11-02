@@ -1,7 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { getSession } from '@/lib/session'
 import { SesameMark } from '@/components/SesameLogo'
-import { LocaleSwitcher } from '@/components/LocaleSwitcher'
 import { LogoutButton } from './logout-button'
 
 export default async function DashboardLayout({
@@ -27,7 +26,6 @@ export default async function DashboardLayout({
                 {session.employeeName}
               </span>
             )}
-            <LocaleSwitcher />
             <LogoutButton />
           </div>
         </div>
