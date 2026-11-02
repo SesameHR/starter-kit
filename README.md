@@ -69,7 +69,8 @@ How it works: Cowork mints a single-use `ticket` and loads this app in an iframe
 at `/api/auth/launch?ticket=…`. The handler redeems the ticket server-to-server
 against `POST {COWORK_BACKEND_URL}/apps/redeem-ticket` (authenticated with
 `X-Launch-Secret: LAUNCH_SHARED_SECRET`), receives the user's Sesame credentials,
-starts the session, and redirects to `/dashboard`. The opaque ticket is the only
+starts the session, and redirects to `/`, which sends it on to `/dashboard`. Set
+`COWORK_REDEEM_URL` to redeem at another endpoint. The opaque ticket is the only
 thing on the URL; the real token is exchanged server-side into the httpOnly
 cookie. Sessions started this way are flagged `embedded: true`.
 
@@ -80,6 +81,23 @@ To register the app on the Cowork side, add a row to its `external_apps` table
 with this app's public origin as `base_url` and the same secret as
 `launch_secret`. The origin must be allowed by Cowork's iframe CSP
 (`frame-src`) — `*.sesametime.com` is allowed out of the box.
+
+An app served inside Cowork's iframe also needs `EMBEDDED=true`: the session
+cookie becomes `SameSite=None; Secure; Partitioned`, the only kind a browser
+keeps in a cross-site frame.
+
+### Optional environment
+
+Every one of these is off when unset, and the app then behaves as above.
+
+| Variable | What it does |
+|---|---|
+| `EMBEDDED` | `true`: the session cookie for an app served in a cross-site iframe |
+| `COWORK_REDEEM_URL` | Redeem launch tickets here instead of `{COWORK_BACKEND_URL}/apps/redeem-ticket` |
+| `ALLOWED_DEV_ORIGINS` | Comma-separated origins allowed to reach the dev server |
+| `SESAME_API_BASE_URL`, `SESAME_BI_BASE_URL` | Reach Sesame through these origins; `{region}` stands for the session's region |
+| `DATABASE_PATH` | Where `src/lib/db.ts` keeps its SQLite file (default `/data/app.db`; needs Node 22.5+) |
+| `NEXT_PUBLIC_STUDIO_PARENT_ORIGIN` | The origin allowed to receive the app's uncaught errors when it is framed |
 
 ## Multi-company support
 
