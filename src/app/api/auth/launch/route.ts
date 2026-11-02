@@ -8,7 +8,12 @@ import { redirectToPath } from '@/lib/request-url'
 const COWORK_BACKEND_URL = process.env.COWORK_BACKEND_URL
 const LAUNCH_SHARED_SECRET = process.env.LAUNCH_SHARED_SECRET
 
-/** Shape returned by Cowork's `POST /apps/redeem-ticket`. */
+// Where launch tickets are redeemed: the Cowork Apps hub, unless the deployment
+// names another redeem endpoint.
+const COWORK_REDEEM_URL =
+  process.env.COWORK_REDEEM_URL ?? `${COWORK_BACKEND_URL}/apps/redeem-ticket`
+
+/** Shape returned by Cowork's redeem-ticket broker. */
 interface RedeemResponse {
   token: string
   region: string
@@ -40,7 +45,7 @@ export async function GET(request: NextRequest) {
 
   let credentials: RedeemResponse
   try {
-    const res = await fetch(`${COWORK_BACKEND_URL}/apps/redeem-ticket`, {
+    const res = await fetch(COWORK_REDEEM_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -64,7 +69,9 @@ export async function GET(request: NextRequest) {
   session.embedded = true
   await session.save()
 
-  const response = redirectToPath('/dashboard')
+  // Land on `/`, the app's entry point: it routes the session onward (to
+  // `/dashboard` on the untouched starter kit).
+  const response = redirectToPath('/')
   response.headers.set('Referrer-Policy', 'no-referrer')
   return response
 }
