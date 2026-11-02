@@ -22,13 +22,25 @@ export interface SessionData {
   embedded?: boolean
 }
 
+// When the app runs embedded in a cross-origin iframe (the Cowork Studio
+// sandbox), the browser only sends the session cookie back if it is
+// `SameSite=None; Secure`. A Lax cookie is dropped on the cross-site redeem
+// redirect, so the freshly-authenticated session would appear logged-out inside
+// the frame. Gate it on EMBEDDED so a standalone deploy keeps the safer Lax
+// default. SameSite=None mandates Secure, so force Secure when embedded too.
+// Partitioned (CHIPS) as well: browsers blocking third-party cookies (Safari,
+// incognito) only keep an embedded SameSite=None cookie when it is partitioned
+// by the top-level site.
+const isEmbedded = process.env.EMBEDDED === 'true'
+
 const sessionOptions: SessionOptions = {
   password: process.env.SESSION_SECRET!,
   cookieName: process.env.SESSION_COOKIE_NAME || 'sesame-session',
   cookieOptions: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
+    secure: isEmbedded || process.env.NODE_ENV === 'production',
+    sameSite: isEmbedded ? ('none' as const) : ('lax' as const),
+    partitioned: isEmbedded,
     maxAge: 60 * 60 * 24 * 7, // 1 week
   },
 }
