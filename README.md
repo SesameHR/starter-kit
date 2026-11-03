@@ -98,6 +98,36 @@ Every one of these is off when unset, and the app then behaves as above.
 | `SESAME_API_BASE_URL`, `SESAME_BI_BASE_URL` | Reach Sesame through these origins; `{region}` stands for the session's region |
 | `DATABASE_PATH` | Where `src/lib/db.ts` keeps its SQLite file (default `/data/app.db`; needs Node 22.5+) |
 | `NEXT_PUBLIC_STUDIO_PARENT_ORIGIN` | The origin allowed to receive the app's uncaught errors when it is framed |
+| `BACK_OFFICE_HOST` | The back office's own host name: it serves only `/admin`, and other hosts answer `/admin` with a 404 (see [Back office](#back-office-optional)) |
+| `ADMIN_EMPLOYEE_IDS` | Comma-separated employee ids let into the back office besides the company's administrators |
+
+## Back office (optional)
+
+An app can have a second side for the people who run it: its back office, where they manage what the
+app's users create. It lives in the same project, under `src/app/admin/`, and shares the app's code and
+database. The kit ships its layout and its "no access" page; add a `page.tsx` there to give the app one.
+
+- **Who gets in:** the company's administrators (Sesame's owner and admin roles) and the employees named
+  in `ADMIN_EMPLOYEE_IDS`. Anyone else signed in sees a "no access" page at the address they asked for.
+  A Cowork launch whose redeem answers `back_office: true` lets that employee in as well.
+- **Pages are covered:** the middleware holds every request to `/admin` to that rule. It asks Sesame and
+  keeps the answer for 10 minutes in a sealed cookie bound to the employee (`@/lib/back-office-mark`).
+- **Server Actions are not:** one can be called from any page, so each back-office action calls
+  `requireBackOffice()` from `@/lib/back-office` first. It asks Sesame every time.
+- **Its own address:** point a second host name at the same deployment and set `BACK_OFFICE_HOST` to it.
+  That host then serves only the back office (and sign-in), and the app's host answers `/admin` with a 404.
+  Each host keeps its own session. Without it, the back office is at `/admin` on the app's own host.
+
+```ts
+// src/app/admin/actions.ts
+'use server'
+import { requireBackOffice } from '@/lib/back-office'
+
+export async function closeRequest(id: string) {
+  await requireBackOffice()
+  // ...
+}
+```
 
 ## Multi-company support
 
@@ -115,12 +145,14 @@ src/
 │   ├── sesame.ts           # getSesame() → authenticated SDK from session
 │   ├── two-factor.ts       # Sesame TOTP login (2FA detection + second step)
 │   ├── request-url.ts      # redirectToPath() → same-origin relative redirects
+│   ├── back-office.ts      # requireBackOffice() → who may use /admin
+│   ├── back-office-mark.ts # That verdict, sealed in a cookie the middleware reads
 │   └── oauth.ts            # SesameSSO client (only if OAuth vars are set)
 ├── i18n/
 │   ├── config.ts           # Supported locales, default locale, cookie name
 │   ├── request.ts          # Locale resolution: cookie → Accept-Language → default
 │   └── actions.ts          # Server Action: persist locale in cookie
-├── middleware.ts            # Protects /dashboard/* + validates SESSION_SECRET in prod
+├── middleware.ts            # Protects /dashboard/* and /admin/*, routes BACK_OFFICE_HOST + validates SESSION_SECRET in prod
 ├── components/
 │   ├── SesameLogo.tsx      # Official brand marks: `SesameLogo` (full lockup) + `SesameMark` (isotipo)
 │   ├── LocaleSwitcher.tsx  # Language selector (login + dashboard header)
@@ -138,6 +170,9 @@ src/
     │   └── actions.ts       # Server Action: select employee
     ├── design-system/
     │   └── page.tsx         # Showcase of @sesamehr/react-design-system
+    ├── admin/
+    │   ├── layout.tsx       # Back office (optional): its header; add a page.tsx to use it
+    │   └── no-access/page.tsx # Shown to whoever the back office does not let in
     ├── dashboard/
     │   ├── layout.tsx       # Header with employee name + logout
     │   ├── page.tsx         # Example: SDK usage
@@ -150,6 +185,7 @@ src/
         ├── callback/route.ts  # GET: handle OAuth callback
         ├── auto-login/route.ts # GET: handle auto-login token exchange
         ├── launch/route.ts    # GET: Cowork launch-ticket redeem → session
+        ├── back-office/route.ts # GET: ask Sesame who may use /admin, keep the answer, go back
         └── logout/route.ts    # GET: destroy session → /login
 ```
 

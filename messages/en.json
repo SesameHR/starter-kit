@@ -67,5 +67,12 @@
   "selectEmployee": {
     "title": "Select account",
     "subtitle": "You belong to multiple companies. Choose one to continue."
+  },
+  "backOffice": {
+    "badge": "Back Office",
+    "noAccess": {
+      "title": "You don't have access",
+      "description": "This app's back office is only for the company's administrators and the people who manage the app."
+    }
   }
 }
