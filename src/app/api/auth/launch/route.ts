@@ -13,6 +13,10 @@ const LAUNCH_SHARED_SECRET = process.env.LAUNCH_SHARED_SECRET
 const COWORK_REDEEM_URL =
   process.env.COWORK_REDEEM_URL ?? `${COWORK_BACKEND_URL}/apps/redeem-ticket`
 
+// A path on this app's own origin: a leading `/` not followed by another `/` or
+// `\`, which would make it protocol-relative (`redirectToPath` refuses those too).
+const LANDING_PATH = /^\/(?![/\\])/
+
 /** Shape returned by Cowork's redeem-ticket broker. */
 interface RedeemResponse {
   token: string
@@ -20,6 +24,9 @@ interface RedeemResponse {
   company_id: string
   employee_id: string
   employee_name: string
+  // Whether this employee may use the app's back office: Cowork's own answer,
+  // absent from brokers that predate it.
+  back_office?: boolean
 }
 
 /**
@@ -67,11 +74,16 @@ export async function GET(request: NextRequest) {
   session.employeeId = credentials.employee_id
   session.employeeName = credentials.employee_name
   session.embedded = true
+  session.backOfficeEmployeeId = credentials.back_office === true ? credentials.employee_id : undefined
   await session.save()
 
   // Land on `/`, the app's entry point: it routes the session onward (to
-  // `/dashboard` on the untouched starter kit).
-  const response = redirectToPath('/')
+  // `/dashboard` on the untouched starter kit). Or on `next`, a path of this
+  // app the launcher asked for (Cowork Studio opens the back office at
+  // `/admin`); anything but a plain path here is ignored.
+  const next = request.nextUrl.searchParams.get('next')
+  const landing = next && LANDING_PATH.test(next) ? (next as `/${string}`) : '/'
+  const response = redirectToPath(landing)
   response.headers.set('Referrer-Policy', 'no-referrer')
   return response
 }

@@ -20,6 +20,9 @@ export interface SessionData {
   // True when the session was started by a Cowork launch ticket (embedded in an
   // iframe). Lets the UI hide login/logout chrome that doesn't apply in-frame.
   embedded?: boolean
+  // The employee a Cowork launch said may use the back office (/admin). An id,
+  // not a flag: a later sign-in as somebody else on this browser inherits nothing.
+  backOfficeEmployeeId?: string
 }
 
 // When the app runs embedded in a cross-origin iframe (the Cowork Studio
@@ -33,7 +36,7 @@ export interface SessionData {
 // by the top-level site.
 const isEmbedded = process.env.EMBEDDED === 'true'
 
-const sessionOptions: SessionOptions = {
+export const sessionOptions: SessionOptions = {
   password: process.env.SESSION_SECRET!,
   cookieName: process.env.SESSION_COOKIE_NAME || 'sesame-session',
   cookieOptions: {

@@ -67,5 +67,12 @@
   "selectEmployee": {
     "title": "Selecciona una cuenta",
     "subtitle": "Perteneces a varias empresas. Elige una para continuar."
+  },
+  "backOffice": {
+    "badge": "Back Office",
+    "noAccess": {
+      "title": "No tienes acceso",
+      "description": "El Back Office de esta app es solo para los administradores de la empresa y las personas que gestionan la app."
+    }
   }
 }
