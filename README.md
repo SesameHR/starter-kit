@@ -154,7 +154,7 @@ src/
 │   └── actions.ts          # Server Action: persist locale in cookie
 ├── middleware.ts            # Protects /dashboard/* and /admin/*, routes BACK_OFFICE_HOST + validates SESSION_SECRET in prod
 ├── components/
-│   ├── SesameLogo.tsx      # Official brand marks: `SesameLogo` (full lockup) + `SesameMark` (isotipo)
+│   ├── SesameLogo.tsx      # The Sesame isotipo, the only brand mark: `SesameMark` (`SesameLogo` is the same mark)
 │   ├── LocaleSwitcher.tsx  # Language selector (login + dashboard header)
 │   └── OtpInput.tsx        # Segmented 6-digit code input (2FA step)
 ├── types/
